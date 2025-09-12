@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profil User</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+html{ scroll-behavior: smooth; }
+/* Slide down animation for mobile menu */
+.slide-down { animation: slideDown 0.3s ease forwards; }
+@keyframes slideDown {
+    from { transform: translateY(-100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+</style>
+</head>
+<body class="bg-slate-100">
+
+<!-- Navbar Desktop -->
+<div class="fixed top-0 left-0 right-0 bg-white shadow-md z-50 p-3 flex justify-between items-center">
+    <h1 class="text-3xl font-bold">Belandja</h1>
+    <div class="md:hidden">
+        <span class="hover:cursor-pointer text-3xl" onclick="openMobileMenu()">&#9776;</span>
+    </div>
+    <div class="hidden md:flex space-x-3 items-center" id="navbarLinks">
+        <a href="index.html" class="hover:text-emerald-500">Home</a>
+        <a href="#About" class="hover:text-emerald-500">About us</a>
+        <a href="#contac" class="hover:text-emerald-500">Contact</a>
+        <span id="userNameDisplay" class="text-slate-700 font-semibold"></span>
+        <button id="logoutBtn" class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 hidden" onclick="logout()">Logout</button>
+    </div>
+</div>
+
+<!-- Mobile Menu -->
+<div id="mobileMenu" class="bg-black text-white fixed top-0 left-0 w-full max-h-1/2 hidden flex-col justify-center items-center gap-3 z-50 overflow-hidden">
+    <button class="absolute top-2 right-3 text-2xl hover:text-red-500" onclick="closeMobileMenu()">&#10005;</button>
+    <a href="index.html" class="hover:bg-gray-700 px-4 py-2 rounded w-full text-center" onclick="closeMobileMenu()">Home</a>
+    <a id="mobileProfileLink" href="#" class="hover:bg-gray-700 px-4 py-2 rounded w-full text-center" onclick="handleProfileClick()">Profil</a>
+    <button id="mobileLogoutBtn" class="bg-red-500 w-full py-2 rounded hover:bg-red-600 hidden" onclick="logout()">Logout</button>
+</div>
+
+<div class="container mx-auto py-10 mt-20">
+    <h1 class="text-3xl font-bold mb-5 text-center">Profil Saya</h1>
+
+    <!-- Profil Card -->
+    <div class="bg-white shadow-md rounded-xl p-5 max-w-md mx-auto text-center">
+        <div class="w-24 h-24 rounded-full bg-gray-400 mx-auto flex justify-center items-center text-white text-2xl font-bold mb-5" id="profileInitials">AJ</div>
+        <p class="text-xl font-semibold mb-2" id="userName">Ahmad Julian</p>
+
+        <div class="space-y-3 text-left">
+            <label class="block font-medium">Alamat</label>
+            <input type="text" id="address" class="w-full p-2 border rounded-lg bg-slate-200">
+            <label class="block font-medium">No HP</label>
+            <input type="text" id="phone" class="w-full p-2 border rounded-lg bg-slate-200">
+        </div>
+
+        <div class="mt-5 flex flex-col gap-3">
+            <button id="saveBtn" class="bg-emerald-500 text-white py-2 rounded-lg hover:bg-emerald-600 transition">Simpan Perubahan</button>
+            <button id="backDashboard" class="bg-gray-500 text-white py-2 rounded-lg hover:bg-gray-600 transition">Kembali ke Dashboard</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // User login check
+    const loggedInUser = JSON.parse(localStorage.getItem('user'));
+    if(!loggedInUser){
+        alert('Silakan login terlebih dahulu!');
+        window.location.href = 'login.html';
+    }
+
+    // All profiles
+    const allProfiles = JSON.parse(localStorage.getItem('allUserProfiles')) || {};
+    const userProfile = allProfiles[loggedInUser.email] || { name: loggedInUser.name, address: '', phone: '' };
+
+    // Fill input fields
+    document.getElementById('userName').innerText = userProfile.name;
+    document.getElementById('address').value = userProfile.address;
+    document.getElementById('phone').value = userProfile.phone;
+
+    // Initials
+    document.getElementById('profileInitials').innerText = userProfile.name.split(' ').map(n=>n[0].toUpperCase()).join('');
+
+    // Save profile
+    document.getElementById('saveBtn').addEventListener('click', () => {
+        userProfile.address = document.getElementById('address').value;
+        userProfile.phone = document.getElementById('phone').value;
+        allProfiles[loggedInUser.email] = userProfile;
+        localStorage.setItem('allUserProfiles', JSON.stringify(allProfiles));
+        alert('Perubahan berhasil disimpan!');
+    });
+
+    // Back dashboard
+    document.getElementById('backDashboard').addEventListener('click', () => {
+        window.location.href = 'index.html';
+    });
+
+    // Navbar
+    function loadUserNavbar(){
+        const userNameDisplay = document.getElementById('userNameDisplay');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const mobileProfileLink = document.getElementById('mobileProfileLink');
+        const mobileLogoutBtn = document.getElementById('mobileLogoutBtn');
+
+        if(loggedInUser){
+            userNameDisplay.textContent = `(${loggedInUser.name})`;
+            logoutBtn.classList.remove('hidden');
+            mobileLogoutBtn.classList.remove('hidden');
+            mobileProfileLink.textContent = 'Profil';
+        } else {
+            userNameDisplay.textContent = '';
+            logoutBtn.classList.add('hidden');
+            mobileLogoutBtn.classList.add('hidden');
+            mobileProfileLink.textContent = 'Login';
+        }
+    }
+
+    function handleProfileClick(){
+        if(loggedInUser){
+            window.location.href = 'profil.html';
+        } else {
+            window.location.href = 'login.html';
+        }
+    }
+
+    function logout(){
+        localStorage.removeItem('user');
+        alert('Berhasil logout!');
+        window.location.href = 'login.html';
+    }
+
+    // Mobile menu
+    function openMobileMenu(){
+        const menu = document.getElementById("mobileMenu");
+        menu.classList.remove('hidden');
+        menu.classList.add('flex','slide-down');
+        document.body.style.overflow='hidden';
+    }
+    function closeMobileMenu(){
+        const menu = document.getElementById("mobileMenu");
+        menu.classList.add('hidden');
+        menu.classList.remove('flex','slide-down');
+        document.body.style.overflow='auto';
+    }
+
+    loadUserNavbar();
+</script>
+
+</body>
+</html>

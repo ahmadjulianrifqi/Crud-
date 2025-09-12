@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Login - Belandja</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex justify-center items-center h-screen">
+
+<div class="bg-white p-8 rounded shadow w-full max-w-sm">
+    <h2 class="text-2xl font-bold mb-5 text-center">Admin Login</h2>
+    <input type="text" id="username" placeholder="Username" class="w-full p-2 mb-3 border rounded">
+    <input type="password" id="password" placeholder="Password" class="w-full p-2 mb-5 border rounded">
+    <button id="loginBtn" class="w-full bg-emerald-500 text-white py-2 rounded hover:bg-emerald-600">Login</button>
+</div>
+
+<script>
+// Hardcode akun admin
+const adminAccounts = [
+    {username: 'admin', password: 'admin123'},
+    {username: 'owner', password: 'belandja2025'}
+];
+
+document.getElementById('loginBtn').addEventListener('click', ()=>{
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value.trim();
+
+    const admin = adminAccounts.find(a=>a.username===username && a.password===password);
+
+    if(admin){
+        localStorage.setItem('adminUser', JSON.stringify({username}));
+        alert('Login berhasil!');
+        window.location.href = 'admin.html';
+    } else {
+        alert('Username atau password salah!');
+    }
+});
+</script>
+
+</body>
+</html>

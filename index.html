@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Food Shoop</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+html{ scroll-behavior: smooth; }
+
+/* Slide down animation for mobile menu */
+.slide-down { animation: slideDown 0.3s ease forwards; }
+@keyframes slideDown {
+    from { transform: translateY(-100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+</style>
+</head>
+<body class="bg-slate-100">
+
+<!-- Mobile Slide Menu -->
+<div id="mobileMenu" class="bg-black text-white fixed top-0 left-0 w-full max-h-1/2 hidden flex-col justify-center items-center gap-3 z-50 overflow-hidden">
+    <button class="absolute top-2 right-3 text-2xl hover:text-red-500" onclick="closeMobileMenu()">&#10005;</button>
+    <a href="#Home" class="hover:bg-gray-700 px-4 py-2 rounded w-full text-center" onclick="closeMobileMenu()">Home</a>
+    <a href="#About" class="hover:bg-gray-700 px-4 py-2 rounded w-full text-center" onclick="closeMobileMenu()">About us</a>
+    <a href="#contac" class="hover:bg-gray-700 px-4 py-2 rounded w-full text-center" onclick="closeMobileMenu()">Contact</a>
+    <a href="pesanan.html" class="hover:bg-gray-700 px-4 py-2 rounded w-full text-center" onclick="closeMobileMenu()">Pesanan</a>
+    <a id="mobileProfileLink" href="#" class="hover:bg-gray-700 px-4 py-2 rounded w-full text-center" onclick="handleProfileClick()">Profil</a>
+</div>
+
+<!-- Navbar -->
+<div class="fixed top-0 left-0 right-0 bg-white shadow-md z-50 p-3 flex justify-between items-center">
+    <h1 id="Home" class="text-3xl font-bold">Belandja</h1>
+    <div class="md:hidden">
+        <span class="hover:cursor-pointer text-3xl" onclick="openMobileMenu()">&#9776;</span>
+    </div>
+    <div class="hidden md:flex space-x-3 items-center" id="navbarLinks">
+        <a href="#Home" class="hover:text-emerald-500">Home</a>
+        <a href="#About" class="hover:text-emerald-500">About us</a>
+        <a href="#contac" class="hover:text-emerald-500">Contact</a>
+        <a href="pesanan.html" class="hover:text-emerald-500">Pesanan</a>
+        <a id="profileLink" href="login.html" class="hover:text-emerald-500" onclick="handleProfileClick()">Login / Register</a>
+        <span id="userNameDisplay" class="text-slate-700 font-semibold"></span>
+        <button id="logoutBtn" class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 hidden" onclick="logout()">Logout</button>
+    </div>
+</div>
+
+<!-- Banner -->
+<div class="container mx-auto bg-[url('img/background.jpeg')] h-96 bg-cover bg-center mt-16">
+    <div class="bg-black/65 h-full flex justify-center items-center">
+        <div class="w-64 space-y-5 text-center">
+            <h1 class="text-white text-2xl">Hungry? Click, Order, Devour!</h1>
+            <p class="text-white">Lorem ipsum dolor, sit amet consectetur adipisicing elit</p>
+        </div>
+    </div>
+</div>
+
+<!-- Pilihan Makanan / Minuman -->
+<div class="flex flex-col space-y-2 md:flex-row p-10 gap-2 justify-around text-slate-900">
+    <div class="text-center">
+        <span class="block pb-1">Butuh Makanan <i><b>Is Here</b></i></span>
+        <button onclick="filterMenu('food')" class="mx-auto px-4 border-2 rounded-xl bg-slate-400 hover:bg-slate-500">Food & snack</button>    
+    </div>
+    <div class="text-center">
+        <span class="block pb-1">Butuh Minuman <i><b>Is Here</b></i></span>
+        <button onclick="filterMenu('drink')" class="mx-auto px-4 border-2 bg-slate-400 rounded-xl mb-2 hover:bg-slate-500">Drink</button>
+    </div>
+    <div class="text-center">
+        <span class="block pb-1">Tampilkan Semua</span>
+        <button onclick="filterMenu('all')" class="mx-auto px-4 border-2 bg-slate-400 rounded-xl mb-2 hover:bg-slate-500">All</button>
+    </div>
+</div>
+
+<!-- Menu Grid -->
+<div id="menuContainer" class="container mx-auto text-center py-5">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+        <!-- Menu akan di-render dari data admin -->
+    </div>
+</div>
+
+<!-- About Section -->
+<div class="container mx-auto bg-gray-800 text-center text-white py-5">
+    <h1 id="About" class="text-2xl pb-3">ABOUT US</h1>
+    <p class="m-2">Lorem ipsum dolor sit amet consectetur adipisicing elit...</p>
+    <hr class="mt-3">
+</div>
+
+<!-- Contact -->
+<div class="p-5 bg-gray-600">
+    <h1 id="contac" class="text-3xl py-2 text-white text-center">Contact Us</h1>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <p class="text-white text-center">Lorem ipsum dolor sit amet consectetur...</p>
+        <div class="bg-white rounded-lg mt-2">
+            <form>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 px-2 py-2">
+                    <div>
+                        <label class="block">First Name</label>
+                        <input type="text" class="bg-slate-200 w-full p-2">
+                    </div>
+                    <div>
+                        <label class="block">Last Name</label>
+                        <input type="text" class="bg-slate-200 w-full p-2">
+                    </div>
+                </div>
+                <div class="gap-5 px-2 py-2">
+                    <div>
+                        <label class="block">Email</label>
+                        <input type="text" class="bg-slate-200 w-full p-2">
+                    </div>
+                    <div>
+                        <label class="block">Message</label>
+                        <textarea class="bg-slate-400 w-full p-2"></textarea>
+                    </div>
+                    <div>
+                        <button class="ring-2 px-2 mt-2 rounded-sm bg-slate-500 text-white hover:bg-emerald-500">Submit</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>       
+</div>
+
+<script>
+// Mobile menu
+function openMobileMenu(){
+    const menu = document.getElementById("mobileMenu");
+    menu.classList.remove('hidden');
+    menu.classList.add('flex', 'slide-down');
+    document.body.style.overflow = 'hidden';
+}
+function closeMobileMenu(){
+    const menu = document.getElementById("mobileMenu");
+    menu.classList.add('hidden');
+    menu.classList.remove('flex', 'slide-down');
+    document.body.style.overflow = 'auto';
+}
+
+// Filter menu
+function filterMenu(type) {
+    const items = document.querySelectorAll('.menu-item');
+    items.forEach(item => {
+        if(type === 'all') item.classList.remove('hidden');
+        else if(item.classList.contains(type)) item.classList.remove('hidden');
+        else item.classList.add('hidden');
+    });
+}
+
+// Add to cart
+function addToCart(name, price){
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    cart.push({name, price});
+    localStorage.setItem('cart', JSON.stringify(cart));
+    alert(`${name} berhasil ditambahkan ke pesanan!`);
+}
+
+// Navbar profil
+function loadUserNavbar(){
+    const user = JSON.parse(localStorage.getItem('user'));
+    const userNameDisplay = document.getElementById('userNameDisplay');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const profileLink = document.getElementById('profileLink');
+    const mobileProfileLink = document.getElementById('mobileProfileLink');
+
+    if(user){
+        userNameDisplay.textContent = `(${user.name})`;
+        logoutBtn.classList.remove('hidden');
+        profileLink.textContent = 'Profil';
+        profileLink.href = 'profil.html';
+        mobileProfileLink.textContent = 'Profil';
+        mobileProfileLink.href = 'profil.html';
+    } else {
+        userNameDisplay.textContent = '';
+        logoutBtn.classList.add('hidden');
+        profileLink.textContent = 'Login / Register';
+        profileLink.href = 'login.html';
+        mobileProfileLink.textContent = 'Login / Register';
+        mobileProfileLink.href = 'login.html';
+    }
+}
+
+// Handle klik profile / login
+function handleProfileClick(){
+    const user = JSON.parse(localStorage.getItem('user'));
+    if(user){
+        window.location.href = 'profil.html';
+    } else {
+        window.location.href = 'login.html';
+    }
+}
+
+function logout(){
+    localStorage.removeItem('user');
+    alert('Berhasil logout!');
+    loadUserNavbar();
+}
+
+// Render menu dari admin
+function renderMenuFromAdmin(){
+    const menuData = JSON.parse(localStorage.getItem('adminMenu')) || [];
+    const container = document.getElementById('menuContainer').querySelector('.grid');
+    container.innerHTML = '';
+    if(menuData.length===0){
+        container.innerHTML='<p class="text-gray-500 col-span-4">Belum ada menu yang tersedia.</p>';
+        return;
+    }
+    menuData.forEach(item=>{
+        const div = document.createElement('div');
+        div.className = `menu-item ${item.type} w-full aspect-square`;
+        div.innerHTML = `
+            <img src="${item.image}" class="w-full h-full aspect-square" alt="${item.name}">
+            <p>${item.name}</p>
+            <span>Harga</span>
+            <p>Rp. ${item.price.toLocaleString()}</p>
+            <button onclick="addToCart('${item.name}',${item.price})" class="border-2 w-full rounded-xl py-1 mt-2 bg-emerald-500 text-white hover:bg-emerald-600 active:scale-95 transition transform duration-150">Check Out</button>
+        `;
+        container.appendChild(div);
+    });
+}
+
+// Load navbar dan menu saat halaman dibuka
+loadUserNavbar();
+renderMenuFromAdmin();
+</script>
+
+</body>
+</html>

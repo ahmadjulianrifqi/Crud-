@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel - Belandja</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+
+<div class="fixed top-0 left-0 right-0 bg-white shadow-md z-50 p-3 flex justify-between items-center">
+    <h1 class="text-2xl font-bold">Admin Panel</h1>
+    <button onclick="logout()" class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600">Logout</button>
+</div>
+
+<div class="pt-20 container mx-auto p-5">
+    <h2 class="text-2xl font-bold mb-4">Kelola Menu Makanan & Minuman</h2>
+    
+    <!-- Form Tambah/Edit -->
+    <div class="bg-white p-5 rounded shadow mb-5">
+        <h3 class="font-semibold mb-3" id="formTitle">Tambah Menu Baru</h3>
+        <input type="text" id="menuName" placeholder="Nama Menu" class="w-full p-2 mb-2 border rounded">
+        <input type="number" id="menuPrice" placeholder="Harga" class="w-full p-2 mb-2 border rounded">
+        <select id="menuType" class="w-full p-2 mb-2 border rounded">
+            <option value="food">Food</option>
+            <option value="drink">Drink</option>
+        </select>
+        <input type="text" id="menuImage" placeholder="URL Gambar" class="w-full p-2 mb-2 border rounded">
+        <button id="saveBtn" class="bg-emerald-500 text-white px-4 py-2 rounded hover:bg-emerald-600">Simpan</button>
+        <button id="cancelEditBtn" class="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500 hidden">Batal</button>
+    </div>
+
+    <!-- Daftar Menu -->
+    <div id="menuList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div>
+</div>
+
+<script>
+// Cek admin login
+const admin = JSON.parse(localStorage.getItem('adminUser'));
+if(!admin){
+    alert('Silahkan login sebagai admin terlebih dahulu!');
+    window.location.href = 'admin-login.html';
+}
+
+// Logout
+function logout(){
+    localStorage.removeItem('adminUser');
+    window.location.href = 'admin-login.html';
+}
+
+// Load menu dari localStorage
+function loadMenu(){
+    const menuData = JSON.parse(localStorage.getItem('adminMenu')) || [];
+    const container = document.getElementById('menuList');
+    container.innerHTML = '';
+
+    menuData.forEach((item, index)=>{
+        const div = document.createElement('div');
+        div.className="bg-white p-3 rounded shadow text-center";
+        div.innerHTML = `
+            <img src="${item.image}" alt="${item.name}" class="w-full h-40 object-cover mb-2 rounded">
+            <p class="font-semibold">${item.name}</p>
+            <p>Rp. ${item.price.toLocaleString()}</p>
+            <p class="italic mb-2">${item.type}</p>
+            <button class="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600 mr-2" onclick="editMenu(${index})">Edit</button>
+            <button class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600" onclick="deleteMenu(${index})">Hapus</button>
+        `;
+        container.appendChild(div);
+    });
+}
+
+// Simpan atau update menu
+let editIndex = null;
+document.getElementById('saveBtn').addEventListener('click', ()=>{
+    const name = document.getElementById('menuName').value.trim();
+    const price = parseInt(document.getElementById('menuPrice').value);
+    const type = document.getElementById('menuType').value;
+    const image = document.getElementById('menuImage').value.trim();
+
+    if(!name || !price || !type || !image){
+        return alert('Semua field harus diisi!');
+    }
+
+    let menuData = JSON.parse(localStorage.getItem('adminMenu')) || [];
+
+    if(editIndex !== null){
+        // Edit
+        menuData[editIndex] = {name, price, type, image};
+        editIndex = null;
+        document.getElementById('formTitle').textContent = 'Tambah Menu Baru';
+        document.getElementById('cancelEditBtn').classList.add('hidden');
+    } else {
+        // Tambah baru
+        menuData.push({name, price, type, image});
+    }
+
+    localStorage.setItem('adminMenu', JSON.stringify(menuData));
+    clearForm();
+    loadMenu();
+});
+
+function clearForm(){
+    document.getElementById('menuName').value='';
+    document.getElementById('menuPrice').value='';
+    document.getElementById('menuType').value='food';
+    document.getElementById('menuImage').value='';
+}
+
+function editMenu(index){
+    const menuData = JSON.parse(localStorage.getItem('adminMenu')) || [];
+    const item = menuData[index];
+    document.getElementById('menuName').value = item.name;
+    document.getElementById('menuPrice').value = item.price;
+    document.getElementById('menuType').value = item.type;
+    document.getElementById('menuImage').value = item.image;
+    document.getElementById('formTitle').textContent = 'Edit Menu';
+    document.getElementById('cancelEditBtn').classList.remove('hidden');
+    editIndex = index;
+}
+
+document.getElementById('cancelEditBtn').addEventListener('click', ()=>{
+    clearForm();
+    editIndex = null;
+    document.getElementById('formTitle').textContent = 'Tambah Menu Baru';
+    document.getElementById('cancelEditBtn').classList.add('hidden');
+});
+
+function deleteMenu(index){
+    if(!confirm('Yakin ingin menghapus menu ini?')) return;
+    let menuData = JSON.parse(localStorage.getItem('adminMenu')) || [];
+    menuData.splice(index,1);
+    localStorage.setItem('adminMenu', JSON.stringify(menuData));
+    loadMenu();
+}
+
+// Load menu saat halaman dibuka
+loadMenu();
+</script>
+
+</body>
+</html>
